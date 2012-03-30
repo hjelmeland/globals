@@ -1,4 +1,5 @@
 #!/usr/bin/env lua
+-- Egil Hjelmeland, 2012; License MIT
 --[[ Reads luac listings and reports global variable usage
 -- Lines where a global is written to are marked with 's'
 -- Globals not preloaded in Lua is marked with  '!!!'
