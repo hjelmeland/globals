@@ -1,6 +1,6 @@
 This is a Lua program that list reports global variable usage in Lua files. 
 
-It uses 'luac', and parses the bytecode listing. No other dependencies. 
+It uses 'luac', and parses the bytecode listing. No other dependencies. Works with both Lua 5.1 and 5.2.
 
 It builds on test/global.lua in the lua-5.1.4 distribution. 
 
