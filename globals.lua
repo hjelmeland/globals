@@ -70,7 +70,7 @@ if not arg[1] then
 	io.write(
 		table.concat({ 
 			'globals.lua - list global variables in Lua files',
-			'usage: globchk.lua  <inputfiles>',
+			'usage: globals.lua  <inputfiles>',
 			'  <inputfiles> : list of Lua files ',
 			'',
 			"  environment variable 'LUAC' overrides name of 'luac'",
