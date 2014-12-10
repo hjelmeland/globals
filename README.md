@@ -1,19 +1,53 @@
-This is a Lua program that list reports global variable usage in Lua files. 
+This is a very simple Lua program that list reports global variable usage in Lua files, based on static analysis.
 
-It uses 'luac', and parses the bytecode listing. No other dependencies. Works with both Lua 5.1 and 5.2.
+It uses 'luac', the Lua compiler, and parses the bytecode listing. No other dependencies. Works with both Lua 5.1 and 5.2.
 
 It builds on test/global.lua in the lua-5.1.4 distribution. 
 
-Lines where a global is written to are marked with 's'
-Globals not preloaded in Lua is marked with  '!!!'
-Name of 'luac' can be overridden with environment variable LUAC 
+#Install
+Just copy globals.lua to somewhere in your PATH and make it executable. Or use
+luarocks:
 
+	luarocks install globals-lua
+
+#Usage
+```
+globals.lua <list of files to check>
+```
+#Example
+
+```
+$ globals.lua  test.lua 
+
+test.lua
+     _G           : 9
+     arg          : 9
+     io           : 9
+     ipairs       : 9
+     os           : 82
+ !!! prev_name    : 49 50 52s
+ !!! s            : 20s 21 24 26
+     string       : 24 26 53
+     table        : 30 35 51 62 71
+     tonumber     : 30
+
+local _G,arg,io,ipairs,os,prev_name,s,string,table,tonumber
+    = _G,arg,io,ipairs,os,prev_name,s,string,table,tonumber
+
+
+```
+
+* Lines where a global is written to are marked with 's'
+* Globals not preloaded in Lua is marked with  '!!!'
+* Last is a list of local declarations that you can paste to the 
+	top of the file in order to turn all global usages into locals. 
+* Name of 'luac' can be overridden with environment variable LUAC
+
+
+#See also
+A much more complete tool is [luacheck](https://github.com/mpeterv/luacheck),
+which also warns about unused locals. I my self use luacheck in combination with 
+globals.lua.
 
 Egil Hjelmeland, 2012; License MIT
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. 
 
