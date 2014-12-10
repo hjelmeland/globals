@@ -17,15 +17,13 @@ dependencies = {
 }
 
 source = {
-	url = "git@github.com:hjelmeland/globals.git",
-	tag = "HEAD",  --"1.0"
-	dir = "globals-lua",
+	url = "git://github.com/hjelmeland/globals.git",
+	tag = "master",
 }
 
 build = {
 	type = "builtin",
 	modules = {
-		["globals.lua"] = "globals.lua"
 	},
 	install = {
 		bin = {
