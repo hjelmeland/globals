@@ -8,19 +8,19 @@
 local _G,arg,io,ipairs,os,string,table,tonumber
     = _G,arg,io,ipairs,os,string,table,tonumber
 
-local function process_file(filename, luac, luavm_ver)
+local function process_file(filename, luac, luavm_minor)
 	local global_list = {} -- global usages {{name=, line=, op=''},...}
 	local name_list = {}   -- list of global names
 	
 	-- run luac, read listing,  store GETGLOBAL/SETGLOBAL lines in global_list
-	do  
-		local fd = io.popen( luac.. ' -p -l '.. filename ) 
-
+	do
+		local fd = io.popen( luac.. ' -p -l '.. filename )
+		
 		while 1 do
 		local s=fd:read()
 			if s==nil then break end
 			local ok,_,l,op,g
-			if luavm_ver == '5.2' then
+			if luavm_minor >= 2 then
 				ok,_,l,op,g=string.find(s,'%[%-?(%d*)%]%s*([GS])ETTABUP.-;%s+_ENV "([^"]+)"(.*)$')
 			else   -- assume 5.1
 				ok,_,l,op,g=string.find(s,'%[%-?(%d*)%]%s*([GS])ETGLOBAL.-;%s+(.*)$')
@@ -31,19 +31,19 @@ local function process_file(filename, luac, luavm_ver)
 			end
 		end
 	end
-
+	
 	table.sort (global_list,
 		function(a,b)
 			if a.name < b.name then return true end
-			if a.name > b.name then return false end 
+			if a.name > b.name then return false end
 			if a.line < b.line then return true end
 			return false
 		end )
-		
+	
 	do  -- print globals, grouped per name
-		local prev_name 
+		local prev_name
 		for _, v in ipairs(global_list) do
-			local name =   v.name 
+			local name =   v.name
 			local unknown = '   '
 			if not _G[name] then unknown = '!!!' end
 			if name ~= prev_name then
@@ -57,7 +57,7 @@ local function process_file(filename, luac, luavm_ver)
 		end
 		io.write('\n')
 	end
-
+	
 	-- print globals declaration list
 	local list = table.concat(name_list, ',')
 	io.write('\n')
@@ -68,7 +68,7 @@ end
 
 if not arg[1] then
 	io.write(
-		table.concat({ 
+		table.concat({
 			'globals.lua - list global variables in Lua files',
 			'usage: globals.lua  <inputfiles>',
 			'  <inputfiles> : list of Lua files ',
@@ -80,10 +80,15 @@ if not arg[1] then
 end
 
 local luac = os.getenv ('LUAC') or 'luac'
-local fd = io.popen( luac .. ' -v'  ) 
-local luavm_ver = fd:read():match('Lua (%d.%d)')
+local fd = io.popen( luac .. ' -v'  )
+local major, minor = fd:read():match('Lua (%d)%.(%d)')
+if tonumber(major) ~= 5 then
+	error("Can only parse Lua 5.x bytecode")
+end
 
-for _,filename in ipairs(arg) do 
+minor = tonumber(minor)
+
+for _,filename in ipairs(arg) do
 	io.write('\n'..filename..'\n')
-	process_file( filename , luac, luavm_ver)
+	process_file( filename , luac, minor)
 end
