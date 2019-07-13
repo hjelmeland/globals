@@ -11,11 +11,11 @@ local _G,arg,io,ipairs,os,string,table,tonumber
 local function process_file(filename, luac, luavm_minor)
 	local global_list = {} -- global usages {{name=, line=, op=''},...}
 	local name_list = {}   -- list of global names
-
+	
 	-- run luac, read listing,  store GETGLOBAL/SETGLOBAL lines in global_list
 	do
 		local fd = io.popen( luac.. ' -p -l '.. filename )
-
+		
 		while 1 do
 		local s=fd:read()
 			if s==nil then break end
@@ -31,7 +31,7 @@ local function process_file(filename, luac, luavm_minor)
 			end
 		end
 	end
-
+	
 	table.sort (global_list,
 		function(a,b)
 			if a.name < b.name then return true end
@@ -39,7 +39,7 @@ local function process_file(filename, luac, luavm_minor)
 			if a.line < b.line then return true end
 			return false
 		end )
-
+	
 	do  -- print globals, grouped per name
 		local prev_name
 		for _, v in ipairs(global_list) do
@@ -53,11 +53,11 @@ local function process_file(filename, luac, luavm_minor)
 				io.write(string.format (  ' %s %-12s :', unknown, name))
 			end
 			io.write(' ',v.line..v.op)
-
+			
 		end
 		io.write('\n')
 	end
-
+	
 	-- print globals declaration list
 	local list = table.concat(name_list, ',')
 	io.write('\n')
